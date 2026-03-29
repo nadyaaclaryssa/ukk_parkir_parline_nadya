@@ -27,7 +27,7 @@ $query_area = mysqli_query($koneksi, "SELECT * FROM tb_area");
 <head>
     <meta charset="UTF-8">
     <title>Parline Admin - Data Area</title>
-    <link rel="icon" href="../parline.png">
+    <link rel="icon" href="../assets/images/parline.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -164,7 +164,7 @@ $query_area = mysqli_query($koneksi, "SELECT * FROM tb_area");
     <div class="app-container">
         <div class="sidebar">
             <div class="logo-section">
-                <img src="../parline.png" alt="Logo">
+                <img src="../assets/images/parline.png" alt="Logo">
                 <h2>Parline</h2>
             </div>
             <div class="nav-menu">
