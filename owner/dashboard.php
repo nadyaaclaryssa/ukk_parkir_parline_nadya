@@ -25,10 +25,9 @@ $q_unit = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_transaksi WHE
 $res_unit = mysqli_fetch_assoc($q_unit);
 $unit_keluar = $res_unit['total'] ?? 0;
 
-// 4. LOGIC DIAGRAM: Ambil data pendapatan 7 hari terakhir (Senin - Minggu)
+// 4. LOGIC DIAGRAM: 7 hari terakhir
 $data_chart = [];
 for ($i = 0; $i < 7; $i++) {
-    // Mengambil data berdasarkan hari dalam minggu ini (0 = Senin, 6 = Minggu)
     $q_chart = mysqli_query($koneksi, "SELECT SUM(biaya_total) as total FROM tb_transaksi 
                 WHERE WEEKDAY(waktu_keluar) = $i 
                 AND YEARWEEK(waktu_keluar, 1) = YEARWEEK(CURDATE(), 1)");
@@ -51,8 +50,10 @@ for ($i = 0; $i < 7; $i++) {
             --grad-1: #d4e9f7; 
             --grad-2: #b2d7f5;
             --text-main: #1e293b; 
-            --text-sub: #475569;
-            --indigo-soft: #e0e7ff;
+            --text-sub: #94a3b8;
+            --indigo-mature: #3730a3; 
+            --indigo-soft: #e0e7ff; 
+            --border-light: #e2e8f0;
         }
 
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -85,57 +86,86 @@ for ($i = 0; $i < 7; $i++) {
         .nav-menu { flex-grow: 1; }
         .nav-menu a {
             display: flex; align-items: center; gap: 12px; padding: 14px 20px;
-            text-decoration: none; color: var(--text-sub); 
+            text-decoration: none; color: #475569; 
             font-size: 14px; font-weight: 600;
             margin-bottom: 5px; border-radius: 18px; transition: 0.3s;
         }
         .nav-menu a.active { background: var(--primary); color: white; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3); }
-        .nav-menu a:hover:not(.active) { background: #f1f5f9; color: var(--text-main); }
 
-        .main-content { flex: 1; background: #fcfdfe; padding: 40px 50px; overflow-y: auto; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
+        .main-content { flex: 1; background: #fcfdfe; padding: 40px 50px; overflow-y: auto; display: flex; flex-direction: column; }
 
-        .user-nav-wrapper { display: flex; align-items: center; gap: 15px; }
-        .profile-stack { text-align: right; border-left: 1px solid #f1f5f9; padding-left: 15px; }
-        .user-avatar {
-            width: 42px; height: 42px; background: var(--primary); 
-            border-radius: 12px; color: white; display: flex; 
-            align-items: center; justify-content: center; font-weight: 800;
+        .header-top { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 40px;
         }
+
+        /* Gaya Kolom untuk Ringkasan Bisnis */
+        .title-column {
+            border-left: 6px solid var(--primary);
+            padding-left: 20px;
+        }
+
+        .user-nav-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-stack {
+            text-align: right;
+            border-left: 1px solid #f1f5f9;
+            padding-left: 15px;
+        }
+
+        .user-avatar { 
+            width: 42px; height: 42px; 
+            background: var(--primary); 
+            border-radius: 12px; color: white; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 800; font-size: 16px;
+        }
+
         .btn-logout-direct {
             display: flex; align-items: center; gap: 10px;
-            background: var(--indigo-soft); color: #3730a3;
+            background: var(--indigo-soft); 
+            color: var(--indigo-mature);
             text-decoration: none; padding: 10px 18px; border-radius: 15px;
             font-size: 12px; font-weight: 800; transition: 0.3s ease;
             border: 1px solid rgba(55, 48, 163, 0.1);
         }
-        .btn-logout-direct:hover { background: #3730a3; color: white; }
-        .btn-logout-direct img { 
-            width: 18px; 
-            filter: invert(18%) sepia(48%) saturate(3651%) hue-rotate(238deg) brightness(91%) contrast(100%); 
-        }
-        .btn-logout-direct:hover img { filter: brightness(0) invert(1); }
+        .btn-logout-direct:hover { background: var(--indigo-mature); color: white; }
+        .btn-logout-direct img { width: 18px; filter: invert(18%) sepia(48%) saturate(3651%) hue-rotate(238deg) brightness(91%) contrast(100%); }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 35px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
         .stat-card {
-            background: white; padding: 30px; border-radius: 35px;
-            border: 1px solid #f1f5f9; transition: 0.3s;
+            background: white; padding: 25px; border-radius: 30px;
+            border: 1px solid var(--border-light); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03);
         }
-        .stat-card.highlight { 
-            background: var(--primary); color: white; border: none;
-            box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.4);
+        .stat-card label { font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
+        .stat-card h2 { font-size: 26px; margin: 10px 0 5px; font-weight: 800; color: var(--text-main); }
+        
+        /* Kontainer Utama dengan Border Lebih Tegas */
+        .main-visual-row { display: grid; grid-template-columns: 1.8fr 1fr; gap: 25px; }
+        
+        .chart-container { 
+            background: white; padding: 35px; border-radius: 40px; 
+            border: 2px solid var(--border-light); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
         }
-        .stat-card label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-sub); }
-        .stat-card.highlight label { color: white; opacity: 0.9; }
-        .stat-card h2 { font-size: 28px; margin: 15px 0 8px; font-weight: 800; color: var(--text-main); }
-        .stat-card.highlight h2 { color: white; }
-        .stat-card p { font-size: 12px; color: var(--text-sub); font-weight: 500; margin: 0; }
-        .stat-card.highlight p { color: white; opacity: 0.8; }
+        
+        .side-panel { display: flex; flex-direction: column; gap: 20px; }
+        
+        .panel-box { 
+            background: white; padding: 30px; border-radius: 35px; 
+            border: 2px solid var(--border-light); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
 
-        .chart-card {
-            background: white; padding: 35px; border-radius: 40px;
-            border: 1px solid #f1f5f9; box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-        }
+        .source-bar { height: 10px; background: #f1f5f9; border-radius: 10px; margin: 12px 0 25px; overflow: hidden; }
+        .fill { height: 100%; background: var(--primary); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -146,29 +176,29 @@ for ($i = 0; $i < 7; $i++) {
                 <img src="../parline.png" alt="Logo">
                 <h2>Parline</h2>
             </div>
-            
             <div class="nav-menu">
-                <a href="dashboard.php" class="active"> Dashboard</a>
-                <a href="detail_laporan.php"> Detail Laporan</a>
+                <a href="dashboard.php" class="active">Dashboard</a>
+                <a href="detail_laporan.php">Detail Laporan</a>
             </div>
         </div>
 
         <div class="main-content">
             <div class="header-top">
-                <div>
-                    <h1 style="font-size: 26px; font-weight: 800; color: var(--text-main); margin: 0;">Dashboard Pemilik</h1>
-                    <p style="color: var(--text-sub); margin: 5px 0 0 0; font-size: 14px;">Pantau data keuangan Parline secara real-time.</p>
+                <div class="title-column">
+                    <h1 style="font-size: 32px; font-weight: 800; color: var(--text-main); margin: 0; line-height: 1.2;">Ringkasan<br>Bisnis</h1>
+                    <p style="color: var(--text-sub); margin: 8px 0 0 0; font-size: 14px; font-weight: 500;">Monitor pendapatan & performa unit</p>
                 </div>
 
                 <div class="user-nav-wrapper">
                     <div class="profile-stack">
                         <div style="font-weight: 700; font-size: 14px; color: var(--text-main);">Owner</div>
-                        <div style="font-size: 11px; color: var(--text-sub);"><?= $_SESSION['nama'] ?? 'Pemilik' ?></div>
+                        <div style="font-size: 11px; color: var(--text-sub);"><?= $_SESSION['nama'] ?></div>
                     </div>
-                    <div class="user-avatar"><?= strtoupper(substr($_SESSION['nama'] ?? 'O', 0, 1)) ?></div>
-                    
+                    <div class="user-avatar">
+                        <?= strtoupper(substr($_SESSION['nama'] ?? 'O', 0, 1)) ?>
+                    </div>
                     <a href="../auth/logout.php" class="btn-logout-direct">
-                        <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
+                        <img src="../assets/images/logout.png" alt="Exit">
                         <span>KELUAR</span>
                     </a>
                 </div>
@@ -178,73 +208,87 @@ for ($i = 0; $i < 7; $i++) {
                 <div class="stat-card">
                     <label>Pendapatan Hari Ini</label>
                     <h2 style="color: #16a34a;">Rp <?= number_format((int)$pendapatan_hari, 0, ',', '.') ?></h2>
-                    <p>Berdasarkan traffic harian</p>
                 </div>
-                
-                <div class="stat-card highlight">
-                    <label>Pendapatan Bulan Ini</label>
-                    <h2>Rp <?= number_format((int)$pendapatan_bulan, 0, ',', '.') ?></h2>
-                    <p>Total akumulasi bulan berjalan</p>
+                <div class="stat-card" style="background: var(--primary); border: none; color: white; box-shadow: 0 15px 30px rgba(37, 99, 235, 0.2);">
+                    <label style="color: rgba(255,255,255,0.7);">Total Bulan Ini</label>
+                    <h2 style="color: white;">Rp <?= number_format((int)$pendapatan_bulan, 0, ',', '.') ?></h2>
                 </div>
-                
                 <div class="stat-card">
-                    <label>Kendaraan Keluar</label>
-                    <h2><?= (int)$unit_keluar ?> <span style="font-size: 16px; color: var(--text-sub);">Unit</span></h2>
-                    <p>Total traffic keluar hari ini</p>
+                    <label>Unit Keluar Hari Ini</label>
+                    <h2><?= (int)$unit_keluar ?> <span style="font-size: 14px; color: var(--text-sub);">Kendaraan</span></h2>
                 </div>
             </div>
 
-            <div class="chart-card">
-                <h3 style="margin: 0 0 30px 0; font-size: 18px; color: var(--text-main);">📈 Tren Pendapatan Mingguan</h3>
-                <canvas id="revenueChart" height="90"></canvas>
+            <div class="main-visual-row">
+                <div class="chart-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h4 style="margin: 0; color: var(--text-main); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800;">Tren Pendapatan Mingguan</h4>
+                        <span style="font-size: 11px; color: var(--text-sub); font-weight: 700; background: #f1f5f9; padding: 4px 10px; border-radius: 8px;">7 Hari Terakhir</span>
+                    </div>
+                    <canvas id="revenueChart" height="150"></canvas>
+                </div>
+
+                <div class="side-panel">
+                    <div class="panel-box">
+                        <h4 style="margin: 0 0 20px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-main); font-weight: 800;">Jenis Kendaraan</h4>
+                        <div style="font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; color: var(--text-main);">
+                            <span>Motor</span><span>75%</span>
+                        </div>
+                        <div class="source-bar"><div class="fill" style="width: 75%;"></div></div>
+                        
+                        <div style="font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; color: var(--text-main);">
+                            <span>Mobil</span><span>25%</span>
+                        </div>
+                        <div class="source-bar"><div class="fill" style="width: 25%; background: #94a3b8;"></div></div>
+                    </div>
+
+                    <div class="panel-box" style="text-align: center; background: #ffffff; display: flex; flex-direction: column; justify-content: center; padding: 20px;">
+                        <div style="font-weight: 800; color: var(--primary); text-transform: uppercase; font-size: 13px; letter-spacing: 1px;"><?= date('l') ?></div>
+                        <div style="font-size: 48px; font-weight: 900; margin: 2px 0; color: var(--indigo-mature);"><?= date('d') ?></div>
+                        <div style="font-size: 13px; color: var(--text-sub); font-weight: 700; text-transform: uppercase;"><?= date('F Y') ?></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         const ctx = document.getElementById('revenueChart').getContext('2d');
-        const labels = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-        
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(37, 99, 235, 0.25)');
+        gradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
+
         new Chart(ctx, {
-            type: 'bar',
+            type: 'line',
             data: {
-                labels: labels,
+                labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
                 datasets: [{
-                    label: 'Pendapatan (Rp)',
-                    // Mengambil data asli dari PHP yang sudah di-loop
+                    label: 'Income',
                     data: <?= json_encode($data_chart) ?>,
-                    backgroundColor: '#2563eb',
-                    borderRadius: 15,
-                    barThickness: 40
+                    borderColor: '#2563eb',
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 4,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#2563eb',
+                    pointBorderWidth: 3
                 }]
             },
             options: {
                 responsive: true,
-                plugins: { 
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
-                            }
-                        }
-                    }
-                },
+                plugins: { legend: { display: false } },
                 scales: {
                     y: { 
                         beginAtZero: true, 
-                        grid: { color: '#f1f5f9', border: { display: false } }, 
-                        ticks: { 
-                            font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 }, 
-                            color: '#334155',
-                            // Format ribuan di sumbu Y
-                            callback: function(value) {
-                                if (value >= 1000) return value / 1000 + 'k';
-                                return value;
-                            }
-                        } 
+                        grid: { color: '#f1f5f9', borderDash: [5, 5] }, 
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: 600, size: 10 }, color: '#94a3b8' } 
                     },
-                    x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 }, color: '#334155' } }
+                    x: { 
+                        grid: { display: false }, 
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: 600, size: 10 }, color: '#94a3b8' } 
+                    }
                 }
             }
         });

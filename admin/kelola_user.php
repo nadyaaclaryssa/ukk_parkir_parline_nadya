@@ -36,27 +36,27 @@ if(isset($_POST['simpan'])){
     }
 }
 
-// Proses Hapus
-// if(isset($_GET['hapus'])){
-//     $id = mysqli_real_escape_string($koneksi, $_GET['hapus']);
-//     mysqli_query($koneksi, "DELETE FROM tb_user WHERE id_user='$id'");
-//     header("location:kelola_user.php");
-//     exit;
-// }
-
+// Proses Hapus (Logika PHP)
 if (isset($_GET['hapus'])) {
     $id = intval($_GET['hapus']);
-
-    // hapus dulu relasi di tb_log_aktivitas
     mysqli_query($koneksi, "DELETE FROM tb_log_aktivitas WHERE id_user = $id");
-
-    // baru hapus user
     $hapus = mysqli_query($koneksi, "DELETE FROM tb_user WHERE id_user = $id");
 
     if ($hapus) {
-        echo "<script>alert('User berhasil dihapus');window.location='?';</script>";
-    } else {
-        echo "<script>alert('Gagal menghapus user');</script>";
+        // Notifikasi sukses menggunakan SweetAlert2
+        echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
+        echo "<script>
+            setTimeout(function() {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: 'User telah dihapus dari sistem.',
+                    icon: 'success',
+                    confirmButtonColor: '#2563eb'
+                }).then(() => {
+                    window.location.href = 'kelola_user.php';
+                });
+            }, 100);
+        </script>";
     }
 }
 ?>
@@ -68,6 +68,8 @@ if (isset($_GET['hapus'])) {
     <title>Parline Admin - Kelola Pengguna</title>
     <link rel="icon" href="../parline.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
         :root {
             --primary: #2563eb;
@@ -78,7 +80,7 @@ if (isset($_GET['hapus'])) {
             --text-sub: #475569;
             --danger: #ef4444;
             --success: #10b981;
-            --indigo-soft: #e0e7ff; /* Ditambahkan agar sama */
+            --indigo-soft: #e0e7ff;
         }
 
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -126,7 +128,6 @@ if (isset($_GET['hapus'])) {
             margin-bottom: 35px; padding-top: 15px; 
         }
 
-        /* USER NAV & LOGOUT CSS (IDENTIK) */
         .user-nav-wrapper { display: flex; align-items: center; gap: 15px; }
         .profile-stack { text-align: right; border-left: 1px solid #f1f5f9; padding-left: 15px; }
 
@@ -146,12 +147,6 @@ if (isset($_GET['hapus'])) {
 
         .btn-logout-direct:hover { background: #3730a3; color: white; }
         
-        .btn-logout-direct img { 
-            width: 18px; 
-            filter: invert(18%) sepia(48%) saturate(3651%) hue-rotate(238deg) brightness(91%) contrast(100%); 
-        }
-        .btn-logout-direct:hover img { filter: brightness(0) invert(1); }
-
         /* FORM & TABLE */
         .form-card { 
             background: white; padding: 30px; border-radius: 35px; 
@@ -166,7 +161,6 @@ if (isset($_GET['hapus'])) {
             padding: 14px 18px; border-radius: 18px; border: 2px solid #f1f5f9; 
             background: #f8fafc; font-size: 13px; outline: none; transition: 0.3s; font-weight: 600; color: var(--text-main);
         }
-        .input-group input:focus { border-color: var(--primary-light); background: white; }
 
         .btn-simpan { 
             background: var(--primary); color: white; border: none; 
@@ -174,20 +168,34 @@ if (isset($_GET['hapus'])) {
             cursor: pointer; transition: 0.3s; 
             box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3); 
         }
-        .btn-simpan:hover { transform: translateY(-3px); background: #1d4ed8; }
 
-        .table-container { background: white; border-radius: 35px; border: 1px solid #f0f4f8; overflow: hidden; box-shadow: 0 15px 30px -10px rgba(0,0,0,0.03); }
+        .table-container { background: white; border-radius: 35px; border: 1px solid #f0f4f8; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; padding: 22px; color: var(--text-sub); font-size: 11px; font-weight: 800; text-transform: uppercase; background: #fafbfc; border-bottom: 1px solid #f1f5f9; }
         td { padding: 20px 22px; font-size: 14px; color: var(--text-main); border-bottom: 1px solid #f8fafc; }
         
-        .role-badge { padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
+        .role-badge { padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; }
         .role-ADMIN { background: #fee2e2; color: #b91c1c; }
         .role-PETUGAS { background: #dcfce7; color: #166534; }
         .role-OWNER { background: #fef9c3; color: #854d0e; }
         
-        .btn-hapus { color: var(--danger); text-decoration: none; font-weight: 800; font-size: 12px; padding: 8px 15px; border-radius: 10px; transition: 0.3s; }
+        /* Modifikasi Style Tombol Hapus */
+        .btn-hapus { 
+            background: none; border: none;
+            color: var(--danger); text-decoration: none; 
+            font-weight: 800; font-size: 12px; padding: 8px 15px; 
+            border-radius: 10px; transition: 0.3s; cursor: pointer;
+        }
         .btn-hapus:hover { background: #fff1f2; }
+
+        /* Custom SweetAlert Style agar matching */
+        .swal2-popup {
+            border-radius: 35px !important;
+            padding: 2rem !important;
+        }
+        .swal2-title { color: var(--text-main) !important; font-weight: 800 !important; }
+        .swal2-confirm { border-radius: 15px !important; font-weight: 700 !important; }
+        .swal2-cancel { border-radius: 15px !important; font-weight: 700 !important; }
     </style>
 </head>
 <body>
@@ -224,7 +232,6 @@ if (isset($_GET['hapus'])) {
                     </div>
                     
                     <a href="../auth/logout.php" class="btn-logout-direct">
-                        <img src="../assets/images/logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
                         <span>KELUAR</span>
                     </a>
                 </div>
@@ -285,7 +292,7 @@ if (isset($_GET['hapus'])) {
                             <td style="color: #64748b; font-weight: 500;">@<?= $data['username'] ?></td>
                             <td><span class="role-badge role-<?= strtoupper($data['role']) ?>"><?= strtoupper($data['role']) ?></span></td>
                             <td style="text-align: right;">
-                                <a href="?hapus=<?= $data['id_user'] ?>" class="btn-hapus" onclick="return confirm('Yakin ingin menghapus user ini?')">Hapus</a>
+                                <button type="button" class="btn-hapus" onclick="konfirmasiHapus(<?= $data['id_user'] ?>, '<?= $data['nama_lengkap'] ?>')">Hapus</button>
                             </td>
                         </tr>
                         <?php } ?>
@@ -294,5 +301,26 @@ if (isset($_GET['hapus'])) {
             </div>
         </div>
     </div>
+
+    <script>
+    function konfirmasiHapus(id, nama) {
+        Swal.fire({
+            title: 'Hapus User?',
+            text: "Anda akan menghapus '" + nama + "'. Data ini tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#2563eb', // Primary Blue
+            cancelButtonColor: '#ef4444',  // Danger Red
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Arahkan ke URL hapus jika dikonfirmasi
+                window.location.href = "?hapus=" + id;
+            }
+        })
+    }
+    </script>
 </body>
 </html>

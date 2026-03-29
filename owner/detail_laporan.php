@@ -10,7 +10,7 @@ $query = mysqli_query($koneksi, "SELECT * FROM tb_transaksi WHERE status='keluar
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Parline - Detail Laporan Gringotts</title>
+    <title>Parline - Parkiring online</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -124,7 +124,6 @@ $query = mysqli_query($koneksi, "SELECT * FROM tb_transaksi WHERE status='keluar
             .kop-title { font-size: 32px; font-weight: 800; color: var(--text-main); text-transform: uppercase; margin: 0; }
             .header-top { display: none !important; }
             th { background-color: var(--primary) !important; color: white !important; -webkit-print-color-adjust: exact; }
-            .main-content::after { content: "Diperiksa oleh,\n\n( Gringotts Goblins Team )"; display: block; text-align: right; margin-top: 80px; font-weight: 600; white-space: pre; margin-right: 50px; }
         }
     </style>
 </head>
@@ -133,7 +132,7 @@ $query = mysqli_query($koneksi, "SELECT * FROM tb_transaksi WHERE status='keluar
     <div class="app-container">
         <div class="sidebar">
             <div class="logo-section">
-                <img src="../parline.png" alt="Logo">
+                <img src="../assets/images/parline.png" alt="Logo">
                 <h2>Parline</h2>
             </div>
             <div class="nav-menu">
@@ -144,8 +143,8 @@ $query = mysqli_query($koneksi, "SELECT * FROM tb_transaksi WHERE status='keluar
 
         <div class="main-content">
             <div class="print-only-kop">
-                <img src="../../hogwarts-removebg-preview.png" class="kop-logo" alt="Logo">
-                <h1 class="kop-title">Gringotts Vault Records</h1>
+                <img src="../assets/images/parline.png" class="kop-logo" alt="Logo">
+                <h1 class="kop-title">Laporan Parline</h1>
                 <p class="kop-subtitle">Parline Parking System - Laporan Transaksi Resmi</p>
                 <p class="kop-subtitle" style="font-size: 10px;">Diunduh pada: <?= date('d F Y, H:i'); ?></p>
             </div>
@@ -161,7 +160,7 @@ $query = mysqli_query($koneksi, "SELECT * FROM tb_transaksi WHERE status='keluar
                         <span>🖨️</span> Cetak Laporan
                     </button>
                     <a href="../auth/logout.php" class="btn-logout-direct">
-                        <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
+                        <img src="../assets/images/logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
                         <span>KELUAR</span>
                     </a>
                 </div>
