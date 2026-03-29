@@ -11,6 +11,7 @@ $query = mysqli_query($koneksi, "SELECT * FROM tb_transaksi WHERE status='keluar
 <head>
     <meta charset="UTF-8">
     <title>Parline - Parkiring online</title>
+    <link rel="icon" href="../parline.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {

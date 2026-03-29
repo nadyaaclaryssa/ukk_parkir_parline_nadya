@@ -202,7 +202,7 @@ $kendaraan_masuk = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as
             <div class="form-wrapper">
                 <div class="info-box">
                     <span style="font-size: 20px;">💡</span>
-                    <span>Scan atau ketik Nomor Plat/Kode Karcis untuk hitung biaya.</span>
+                    <span>Ketik Nomor Plat/Kode Karcis untuk hitung biaya.</span>
                 </div>
 
                 <div class="form-card">
