@@ -154,7 +154,7 @@ $kendaraan_masuk = mysqli_fetch_assoc($kendaraan_masuk_query)['total'] ?? 0;
                 <h2>Parline</h2>
             </div>
             <div class="nav-menu">
-                <a href="dashboard.php" class="active">Hallo</a>
+                <a href="dashboard.php" class="active">Dashboard</a>
                 <a href="transaksi_masuk.php">Transaksi Masuk</a>
                 <a href="kendaraan_aktif.php">Kendaraan Aktif</a> 
                 <a href="transaksi_keluar.php">Transaksi Keluar</a>
