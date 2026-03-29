@@ -140,7 +140,6 @@ $query = mysqli_query($koneksi, "SELECT * FROM tb_transaksi WHERE status='keluar
                 <a href="dashboard.php"> Dashboard</a>
                 <a href="detail_laporan.php" class="active"> Detail Laporan</a>
             </div>
-            <a href="../auth/logout.php" class="logout-link"> Logout</a>
         </div>
 
         <div class="main-content">
@@ -161,7 +160,7 @@ $query = mysqli_query($koneksi, "SELECT * FROM tb_transaksi WHERE status='keluar
                     <button class="btn-print" onclick="window.print()">
                         <span>🖨️</span> Cetak Laporan
                     </button>
-                    <a href="../logout.php" class="btn-logout-direct">
+                    <a href="../auth/logout.php" class="btn-logout-direct">
                         <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
                         <span>KELUAR</span>
                     </a>

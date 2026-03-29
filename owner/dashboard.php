@@ -144,8 +144,6 @@ $unit_keluar = $res_unit['total'] ?? 0;
                 <a href="dashboard.php" class="active"> Dashboard</a>
                 <a href="detail_laporan.php"> Detail Laporan</a>
             </div>
-
-            <a href="../auth/logout.php" class="logout-link"> Logout</a>
         </div>
 
         <div class="main-content">
@@ -162,7 +160,7 @@ $unit_keluar = $res_unit['total'] ?? 0;
                     </div>
                     <div class="user-avatar"><?= strtoupper(substr($_SESSION['nama'] ?? 'O', 0, 1)) ?></div>
                     
-                    <a href="../logout.php" class="btn-logout-direct">
+                    <a href="../auth/logout.php" class="btn-logout-direct">
                         <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
                         <span>KELUAR</span>
                     </a>
