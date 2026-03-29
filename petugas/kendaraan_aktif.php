@@ -141,8 +141,6 @@ $query = mysqli_query($koneksi, "SELECT tb_transaksi.*, tb_area.nama_area
                 <a href="kendaraan_aktif.php" class="active">Kendaraan Aktif</a> 
                 <a href="transaksi_keluar.php">Transaksi Keluar</a>
             </div>
-            
-            <a href="../auth/logout.php" style="margin-top: 25px; color: var(--text-sub); text-decoration: none; font-size: 14px; padding-left: 20px; font-weight: 600;"> Logout</a>
         </div>
 
         <div class="main-content">
@@ -163,7 +161,7 @@ $query = mysqli_query($koneksi, "SELECT tb_transaksi.*, tb_area.nama_area
                         </div>
                     </div>
 
-                    <a href="../logout.php" class="btn-logout-direct">
+                    <a href="../auth/logout.php" class="btn-logout-direct">
                         <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
                         <span>KELUAR</span>
                     </a>

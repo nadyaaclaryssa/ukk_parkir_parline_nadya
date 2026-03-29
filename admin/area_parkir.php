@@ -20,14 +20,6 @@ if(isset($_GET['toggle_id'])) {
 
 // Ambil data Area asli dari Database
 $query_area = mysqli_query($koneksi, "SELECT * FROM tb_area");
-
-// Data untuk sidebar storage
-$query_masuk = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_transaksi WHERE status='masuk'");
-$kendaraan_masuk = mysqli_fetch_assoc($query_masuk)['total'] ?? 0;
-
-$query_total_cap = mysqli_query($koneksi, "SELECT SUM(kapasitas) as total_kap FROM tb_area");
-$res_cap = mysqli_fetch_assoc($query_total_cap);
-$total_kapasitas_all = $res_cap['total_kap'] ?? 0;
 ?>
 
 <!DOCTYPE html>
@@ -42,12 +34,14 @@ $total_kapasitas_all = $res_cap['total_kap'] ?? 0;
     <style>
         :root {
             --primary: #2563eb;
+            --primary-light: #60a5fa;
             --grad-1: #d4e9f7; 
             --grad-2: #b2d7f5;
             --text-main: #1e293b;
-            --text-sub: #475569; 
+            --text-sub: #475569;
+            --indigo-soft: #e0e7ff; 
             --success: #10b981;
-            --indigo-soft: #e0e7ff;
+            --danger: #ef4444;
         }
 
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -67,7 +61,7 @@ $total_kapasitas_all = $res_cap['total_kap'] ?? 0;
             box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.15);
         }
 
-        /* --- SIDEBAR --- */
+        /* SIDEBAR (Sama dengan Dashboard) */
         .sidebar {
             width: 280px; background: white;
             padding: 40px 25px; display: flex; flex-direction: column;
@@ -76,25 +70,26 @@ $total_kapasitas_all = $res_cap['total_kap'] ?? 0;
         .logo-section { display: flex; align-items: center; gap: 15px; padding: 0 10px; margin-bottom: 40px; }
         .logo-section img { width: 45px; height: 45px; border-radius: 12px; }
         .logo-section h2 { font-size: 20px; margin: 0; color: var(--text-main); font-weight: 800; }
-        
+
         .nav-menu { flex-grow: 1; }
         .nav-menu a {
             display: flex; align-items: center; gap: 12px; padding: 14px 20px;
-            text-decoration: none; color: var(--text-sub); font-size: 14px; font-weight: 600;
+            text-decoration: none; color: var(--text-sub); 
+            font-size: 14px; font-weight: 600;
             margin-bottom: 5px; border-radius: 18px; transition: 0.3s;
         }
         .nav-menu a.active { background: var(--primary); color: white; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3); }
         .nav-menu a:hover:not(.active) { background: #f1f5f9; color: var(--text-main); }
 
-        /* --- MAIN CONTENT --- */
+        /* MAIN CONTENT */
         .main-content { flex: 1; background: #fcfdfe; padding: 40px 50px; overflow-y: auto; }
-        
-        /* HEADER TOP (SAMA DENGAN KELOLA USER) */
+
         .header-top { 
             display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 35px; padding-top: 15px;
+            margin-bottom: 35px; padding-top: 10px; 
         }
 
+        /* USER NAV & LOGOUT (Sama dengan Dashboard) */
         .user-nav-wrapper { display: flex; align-items: center; gap: 15px; }
         .profile-stack { text-align: right; border-left: 1px solid #f1f5f9; padding-left: 15px; }
 
@@ -118,44 +113,50 @@ $total_kapasitas_all = $res_cap['total_kap'] ?? 0;
         }
         .btn-logout-direct:hover img { filter: brightness(0) invert(1); }
 
-        .section-title { font-size: 12px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 25px; }
+        /* AREA GRID STYLING */
+        .section-title { font-size: 14px; font-weight: 800; margin-bottom: 25px; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; }
+        
         .area-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
 
-        /* --- CARD & SWITCH --- */
         .area-card {
             background: white; padding: 30px; border-radius: 35px;
-            border: 1px solid #f0f4f8; box-shadow: 0 15px 30px -10px rgba(0,0,0,0.03);
-            transition: 0.3s ease; position: relative;
+            border: 1px solid #f0f4f8; transition: 0.4s;
+            position: relative; overflow: hidden;
         }
-        .area-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        
-        .switch { position: relative; width: 65px; height: 30px; }
+        .area-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); }
+
+        .area-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .area-name { font-size: 18px; font-weight: 800; color: var(--text-main); margin: 0; }
+        .area-id { font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-top: 4px; display: block; }
+
+        /* CUSTOM SWITCH */
+        .switch { position: relative; width: 50px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #333; transition: .4s; border-radius: 34px;
+            background-color: #cbd5e1; transition: .4s; border-radius: 34px;
         }
         .slider:before {
-            position: absolute; content: ""; height: 22px; width: 22px;
+            position: absolute; content: ""; height: 18px; width: 18px;
             left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;
         }
-        input:checked + .slider { background-color: #6684c5; } 
-        input:checked + .slider:before { transform: translateX(35px); }
-        .slider:after {
-            content: "OFF"; position: absolute; right: 8px; top: 50%;
-            transform: translateY(-50%); font-size: 9px; font-weight: 800; color: white;
-        }
-        input:checked + .slider:after { content: "ON"; left: 10px; right: auto; color: #333; }
+        input:checked + .slider { background-color: var(--primary); } 
+        input:checked + .slider:before { transform: translateX(24px); }
 
-        .area-off { opacity: 0.7; filter: grayscale(0.8); }
-        .area-name { font-size: 20px; font-weight: 800; color: var(--text-main); margin: 0; }
-        .area-loc { color: var(--text-sub); font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        .stat-label { font-size: 13px; color: var(--text-sub); font-weight: 600; }
-        .stat-value { font-size: 14px; font-weight: 800; color: var(--text-main); }
-        .progress-container { height: 10px; background: #f1f5f9; border-radius: 20px; overflow: hidden; margin: 15px 0; }
-        .progress-bar { height: 100%; background: var(--primary); transition: 0.5s; }
-        .perc-label { text-align: right; font-size: 11px; color: var(--text-sub); font-weight: 700; }
+        /* STATUS & PROGRESS */
+        .stat-box { background: #f8fafc; padding: 15px; border-radius: 20px; margin-bottom: 20px; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .stat-row:last-child { margin-bottom: 0; }
+        .stat-label { font-size: 12px; color: var(--text-sub); font-weight: 600; }
+        .stat-value { font-size: 13px; font-weight: 800; color: var(--text-main); }
+
+        .progress-container { height: 10px; background: #e2e8f0; border-radius: 20px; overflow: hidden; margin-top: 10px; }
+        .progress-bar { height: 100%; background: var(--primary); transition: 0.6s ease; border-radius: 20px; }
+        
+        .perc-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .perc-val { font-size: 11px; font-weight: 800; color: var(--text-main); }
+
+        .area-off { opacity: 0.6; filter: grayscale(0.5); }
     </style>
 </head>
 <body>
@@ -177,8 +178,8 @@ $total_kapasitas_all = $res_cap['total_kap'] ?? 0;
         <div class="main-content">
             <div class="header-top">
                 <div>
-                    <h1 style="font-size: 26px; font-weight: 800; color: var(--text-main); margin: 0;">Monitoring Area</h1>
-                    <p style="color: var(--text-sub); font-size: 14px; margin: 5px 0 0 0;">Kapasitas parkir secara real-time</p>
+                    <h1 style="font-size: 24px; font-weight: 800; color: var(--text-main); margin: 0;">Monitoring Area</h1>
+                    <p style="color: var(--text-sub); font-size: 14px; margin: 5px 0 0 0;">Kelola kapasitas dan status area parkir</p>
                 </div>
 
                 <div class="user-nav-wrapper">
@@ -197,18 +198,24 @@ $total_kapasitas_all = $res_cap['total_kap'] ?? 0;
                 </div>
             </div>
 
-            <h2 class="section-title">Live Capacity</h2>
+            <h2 class="section-title">Parking Capacity Analysis</h2>
+            
             <div class="area-grid">
                 <?php while($a = mysqli_fetch_assoc($query_area)): 
                     $is_active = ($a['status'] == 1);
                     $persen = ($a['kapasitas'] > 0) ? ($a['terisi'] / $a['kapasitas']) * 100 : 0;
                     $sisa = $a['kapasitas'] - $a['terisi'];
+                    
+                    // Warna dinamis berdasarkan kapasitas
+                    $color = "var(--primary)";
+                    if($persen >= 90) $color = "var(--danger)";
+                    else if($persen >= 75) $color = "#f59e0b";
                 ?>
                 <div class="area-card <?= !$is_active ? 'area-off' : '' ?>">
                     <div class="area-header">
                         <div>
                             <h3 class="area-name"><?= $a['nama_area'] ?></h3>
-                            <div class="area-loc">📍 ID: <?= $a['id_area'] ?></div>
+                            <span class="area-id">ID: <?= $a['id_area'] ?></span>
                         </div>
                         <label class="switch">
                             <input type="checkbox" class="btn-konfirmasi" 
@@ -218,18 +225,26 @@ $total_kapasitas_all = $res_cap['total_kap'] ?? 0;
                         </label>
                     </div>
 
-                    <div class="stat-row">
-                        <span class="stat-label">Total Kapasitas</span>
-                        <span class="stat-value"><?= $a['kapasitas'] ?> Slot</span>
+                    <div class="stat-box">
+                        <div class="stat-row">
+                            <span class="stat-label">Total Kapasitas</span>
+                            <span class="stat-value"><?= $a['kapasitas'] ?> Slot</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Tersedia</span>
+                            <span class="stat-value" style="color: <?= $is_active ? 'var(--success)' : 'inherit' ?>;">
+                                <?= $sisa ?> Slot
+                            </span>
+                        </div>
                     </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Tersedia</span>
-                        <span class="stat-value" style="color: var(--success);"><?= $sisa ?> Slot</span>
+
+                    <div class="perc-info">
+                        <span class="stat-label">Tingkat Keterisian</span>
+                        <span class="perc-val"><?= round($persen) ?>%</span>
                     </div>
                     <div class="progress-container">
-                        <div class="progress-bar" style="width: <?= $is_active ? $persen : 0 ?>%;"></div>
+                        <div class="progress-bar" style="width: <?= $is_active ? $persen : 0 ?>%; background: <?= $color ?>;"></div>
                     </div>
-                    <div class="perc-label">Terisi: <?= round($persen) ?>%</div>
                 </div>
                 <?php endwhile; ?>
             </div>
@@ -245,13 +260,14 @@ $total_kapasitas_all = $res_cap['total_kap'] ?? 0;
 
             Swal.fire({
                 title: 'Konfirmasi Perubahan',
-                text: targetStatus ? "Nyalakan area ini?" : "Matikan area parkir ini?",
+                text: targetStatus ? "Aktifkan area parkir ini?" : "Nonaktifkan area parkir ini?",
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#2563eb',
-                cancelButtonColor: '#64748b',
+                cancelButtonColor: '#cbd5e1',
                 confirmButtonText: 'Ya, Ubah!',
-                cancelButtonText: 'Batal'
+                cancelButtonText: 'Batal',
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = url;
