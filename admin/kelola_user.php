@@ -37,11 +37,27 @@ if(isset($_POST['simpan'])){
 }
 
 // Proses Hapus
-if(isset($_GET['hapus'])){
-    $id = mysqli_real_escape_string($koneksi, $_GET['hapus']);
-    mysqli_query($koneksi, "DELETE FROM tb_user WHERE id_user='$id'");
-    header("location:kelola_user.php");
-    exit;
+// if(isset($_GET['hapus'])){
+//     $id = mysqli_real_escape_string($koneksi, $_GET['hapus']);
+//     mysqli_query($koneksi, "DELETE FROM tb_user WHERE id_user='$id'");
+//     header("location:kelola_user.php");
+//     exit;
+// }
+
+if (isset($_GET['hapus'])) {
+    $id = intval($_GET['hapus']);
+
+    // hapus dulu relasi di tb_log_aktivitas
+    mysqli_query($koneksi, "DELETE FROM tb_log_aktivitas WHERE id_user = $id");
+
+    // baru hapus user
+    $hapus = mysqli_query($koneksi, "DELETE FROM tb_user WHERE id_user = $id");
+
+    if ($hapus) {
+        echo "<script>alert('User berhasil dihapus');window.location='?';</script>";
+    } else {
+        echo "<script>alert('Gagal menghapus user');</script>";
+    }
 }
 ?>
 
@@ -208,7 +224,7 @@ if(isset($_GET['hapus'])){
                     </div>
                     
                     <a href="../auth/logout.php" class="btn-logout-direct">
-                        <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
+                        <img src="../assets/images/logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
                         <span>KELUAR</span>
                     </a>
                 </div>

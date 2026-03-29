@@ -179,7 +179,7 @@ $sisa_slot = 1350 - $kendaraan_masuk;
                     </div>
                     
                     <a href="../auth/logout.php" class="btn-logout-direct">
-                        <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
+                        <img src="../assets/images/logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
                         <span>KELUAR</span>
                     </a>
                 </div>
