@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'config/koneksi.php'; 
+include '../config/koneksi.php'; 
 date_default_timezone_set('Asia/Jakarta');
 
 if (isset($_POST['login'])) {
@@ -36,15 +36,15 @@ if (isset($_POST['login'])) {
 
         // Redirect sesuai role
         if($data['role'] == 'admin'){
-            header("location:admin/dashboard.php");
+            header("location:../admin/dashboard.php");
         } else if($data['role'] == 'petugas'){
-            header("location:petugas/dashboard.php");
+            header("location:../petugas/dashboard.php");
         } else {
-            header("location:owner/dashboard.php");
+            header("location:../owner/dashboard.php");
         }
         exit;
     } else {
-        echo "<script>alert('Gagal! Username atau Password Salah.'); window.location='index.php';</script>";
+        echo "<script>alert('Gagal! Username atau Password Salah.'); window.location='../index.php';</script>";
     }
 }
 ?>

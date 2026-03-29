@@ -207,7 +207,7 @@ if(isset($_GET['hapus'])){
                         <?= strtoupper(substr($_SESSION['nama'] ?? 'A', 0, 1)) ?>
                     </div>
                     
-                    <a href="../logout.php" class="btn-logout-direct">
+                    <a href="../auth/logout.php" class="btn-logout-direct">
                         <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
                         <span>KELUAR</span>
                     </a>

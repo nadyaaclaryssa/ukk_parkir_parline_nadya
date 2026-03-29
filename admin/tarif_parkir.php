@@ -185,7 +185,7 @@ if(isset($_GET['hapus'])){
                         <div style="font-size: 11px; color: var(--text-sub);"><?= $_SESSION['nama'] ?? 'Admin' ?></div>
                     </div>
                     <div class="user-avatar"><?= strtoupper(substr($_SESSION['nama'] ?? 'A', 0, 1)) ?></div>
-                    <a href="../logout.php" class="btn-logout-direct">
+                    <a href="../auth/logout.php" class="btn-logout-direct">
                         <span>KELUAR</span>
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </a>

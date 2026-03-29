@@ -212,7 +212,7 @@ $query = mysqli_query($koneksi, $query_str);
         <a href="log_aktivitas.php" class="active">📜 Log Aktivitas</a>
         
         <div style="margin-top: auto;">
-            <a href="../logout.php" style="color: #ffb1b1;">🚪 Logout</a>
+            <a href="../auth/logout.php" style="color: #ffb1b1;">🚪 Logout</a>
         </div>
     </div>
 

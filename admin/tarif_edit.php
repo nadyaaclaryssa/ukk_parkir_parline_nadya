@@ -57,7 +57,7 @@ if(isset($_POST['update'])){
         <a href="kelola_user.php">Data User</a>
         <a href="tarif_parkir.php" class="active">Data Tarif</a>
         <a href="area_parkir.php">Data Area</a>
-        <a href="../logout.php" style="margin-top:auto; color:#ffb1b1;">Logout</a>
+        <a href="../auth/logout.php" style="margin-top:auto; color:#ffb1b1;">Logout</a>
     </div>
 
     <div class="main-content">

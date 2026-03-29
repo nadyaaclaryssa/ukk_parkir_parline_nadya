@@ -174,7 +174,7 @@ $area_terpilih = isset($_GET['area']) ? $_GET['area'] : '';
                     <div class="user-avatar">
                         <?= strtoupper(substr($_SESSION['nama'] ?? 'P', 0, 1)) ?>
                     </div>
-                    <a href="../logout.php" class="btn-logout-direct">
+                    <a href="../auth/logout.php" class="btn-logout-direct">
                         <img src="logout.png" alt="Exit">
                         <span>KELUAR</span>
                     </a>
