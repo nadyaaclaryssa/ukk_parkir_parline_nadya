@@ -6,43 +6,42 @@ if(!isset($_SESSION['role']) || $_SESSION['role'] != "admin") {
 }
 include '../config/koneksi.php';
 
-// Ambil data kendaraan masuk untuk progress bar
+// Ambil data untuk Progress Bar
 $query_masuk = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_transaksi WHERE status='masuk'");
 $kendaraan_masuk = mysqli_fetch_assoc($query_masuk)['total'] ?? 0;
 $total_kapasitas_all = 1350;
+$persen = ($kendaraan_masuk / $total_kapasitas_all) * 100;
 
-// 1. PROSES SIMPAN TARIF (LOGIKA ANTI-DUPLIKAT)
+// Variabel Notifikasi
+$status_msg = "";
+
+// 1. PROSES SIMPAN TARIF
 if(isset($_POST['tambah'])){
     $jenis = mysqli_real_escape_string($koneksi, $_POST['jenis_kendaraan']);
-    $harga = (int)$_POST['harga_per_jam']; // Memastikan input adalah angka
+    $harga = (int)$_POST['harga_per_jam'];
     
     if(!empty($jenis) && $harga > 0) {
-        // Cek apakah jenis kendaraan sudah ada di database
         $cek = mysqli_query($koneksi, "SELECT * FROM tb_tarif WHERE jenis_kendaraan='$jenis'");
         if(mysqli_num_rows($cek) > 0) {
-            echo "<script>alert('Kategori $jenis sudah ada! Silakan hapus yang lama jika ingin mengganti harga.'); window.location='tarif_parkir.php';</script>";
+            $status_msg = "duplikat";
         } else {
             mysqli_query($koneksi, "INSERT INTO tb_tarif (jenis_kendaraan, tarif_per_jam) VALUES ('$jenis', '$harga')");
-            header("location:tarif_parkir.php");
+            $status_msg = "sukses_tambah";
         }
     }
-    exit;
 }
 
-// 2. PROSES HAPUS (LOGIKA ANTI-ERROR FOREIGN KEY)
+// 2. PROSES HAPUS
 if(isset($_GET['hapus'])){
     $id = mysqli_real_escape_string($koneksi, $_GET['hapus']);
-    
-    // Cek apakah data ini sedang dipakai di tabel transaksi
     $cek_relasi = mysqli_query($koneksi, "SELECT * FROM tb_transaksi WHERE id_tarif='$id'");
     
     if(mysqli_num_rows($cek_relasi) > 0) {
-        echo "<script>alert('Gagal! Data tarif ini tidak bisa dihapus karena sudah ada data kendaraan di tabel transaksi yang menggunakannya.'); window.location='tarif_parkir.php';</script>";
+        $status_msg = "gagal_hapus";
     } else {
         mysqli_query($koneksi, "DELETE FROM tb_tarif WHERE id_tarif='$id'");
-        header("location:tarif_parkir.php");
+        $status_msg = "sukses_hapus";
     }
-    exit;
 }
 ?>
 
@@ -53,9 +52,10 @@ if(isset($_GET['hapus'])){
     <title>Parline Admin - Data Tarif</title>
     <link rel="icon" href="../parline.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
-            /* Warna diganti ke Biru Navy agar lebih profesional/ Ravenclaw vibe */
             --primary: #2563eb; 
             --primary-light: #3b82f6;
             --grad-1: #d4e9f7; 
@@ -63,6 +63,7 @@ if(isset($_GET['hapus'])){
             --text-main: #1e293b;
             --text-sub: #475569; 
             --danger: #ef4444;
+            --indigo-soft: #e0e7ff;
         }
 
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -82,82 +83,65 @@ if(isset($_GET['hapus'])){
             box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.15);
         }
 
+        /* SIDEBAR (Tanpa Ikon) */
         .sidebar {
             width: 280px; background: white;
             padding: 40px 25px; display: flex; flex-direction: column;
             border-right: 1px solid #f0f4f8;
         }
-
         .logo-section { display: flex; align-items: center; gap: 15px; padding: 0 10px; margin-bottom: 40px; }
         .logo-section img { width: 45px; height: 45px; border-radius: 12px; }
         .logo-section h2 { font-size: 20px; margin: 0; color: var(--text-main); font-weight: 800; }
 
         .nav-menu { flex-grow: 1; }
         .nav-menu a {
-            display: flex; align-items: center; gap: 12px; padding: 14px 20px;
-            text-decoration: none; color: var(--text-sub); font-size: 14px; font-weight: 600;
-            margin-bottom: 5px; border-radius: 18px; transition: 0.3s;
+            display: block; padding: 14px 20px;
+            text-decoration: none; color: var(--text-sub); 
+            font-size: 14px; font-weight: 600; margin-bottom: 5px; 
+            border-radius: 18px; transition: 0.3s;
         }
-        .nav-menu a.active { background: var(--primary); color: white; box-shadow: 0 10px 20px -5px rgba(30, 58, 138, 0.3); }
+        .nav-menu a.active { background: var(--primary); color: white; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3); }
         .nav-menu a:hover:not(.active) { background: #f1f5f9; color: var(--text-main); }
 
-        .storage-box { margin-top: auto; padding: 25px; background: #f8fafc; border-radius: 30px; }
+        .storage-box { margin-top: auto; padding: 25px; background: #f8fafc; border-radius: 30px; margin-bottom: 20px; }
         .storage-box p { margin: 0 0 12px 0; color: var(--text-sub); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .progress-bg { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
-        .progress-fill { height: 100%; background: var(--primary); }
+        .progress-bg { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary); transition: 0.5s; }
 
+        /* MAIN CONTENT */
         .main-content { flex: 1; background: #fcfdfe; padding: 40px 50px; overflow-y: auto; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; padding-top: 15px; }
 
-        .header-top { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 35px;
-            padding-top: 15px; 
-        }
-        
-        .form-card { 
-            background: white; padding: 30px; border-radius: 35px; 
-            margin-bottom: 30px; border: 1px solid #f0f4f8; 
-            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); 
-        }
-        .grid-form { display: grid; grid-template-columns: 1.5fr 1fr 0.8fr; gap: 20px; align-items: end; }
-        
-        .input-group { display: flex; flex-direction: column; gap: 10px; }
-        .input-group label { font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; padding-left: 5px; }
-        .input-group input, .input-group select { 
-            padding: 14px 18px; border-radius: 18px; border: 2px solid #f1f5f9; 
-            background: #f8fafc; font-size: 13px; outline: none; transition: 0.3s; font-weight: 600; color: var(--text-main);
-        }
-        .input-group input:focus { border-color: var(--primary-light); background: white; }
-
-        .btn-simpan { 
-            background: var(--primary); color: white; border: none; 
-            padding: 15px; border-radius: 18px; font-weight: 800; 
-            cursor: pointer; transition: 0.3s; 
-            box-shadow: 0 10px 20px -5px rgba(30, 58, 138, 0.3); 
-        }
-        .btn-simpan:hover { transform: translateY(-3px); opacity: 0.9; }
-
-        .table-container { background: white; border-radius: 35px; border: 1px solid #f0f4f8; overflow: hidden; box-shadow: 0 15px 30px -10px rgba(0,0,0,0.03); }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 22px; color: var(--text-sub); font-size: 11px; font-weight: 800; text-transform: uppercase; background: #fafbfc; border-bottom: 1px solid #f1f5f9; }
-        td { padding: 20px 22px; font-size: 14px; color: var(--text-main); border-bottom: 1px solid #f8fafc; }
-        
-        .price-badge { 
-            background: #f1f5f9; color: var(--text-main); padding: 8px 15px; 
-            border-radius: 12px; font-weight: 800; font-size: 13px; border: 1px solid #e2e8f0;
-        }
-        
-        .btn-hapus { color: var(--danger); text-decoration: none; font-weight: 800; font-size: 12px; padding: 8px 15px; border-radius: 10px; transition: 0.3s; }
-        .btn-hapus:hover { background: #fff1f2; }
-
+        /* USER NAV (Hanya disini ada ikon) */
+        .user-nav-wrapper { display: flex; align-items: center; gap: 15px; }
+        .profile-stack { text-align: right; border-left: 1px solid #f1f5f9; padding-left: 15px; }
         .user-avatar {
-            width: 40px; height: 40px; background: var(--primary); 
+            width: 42px; height: 42px; background: var(--primary); 
             border-radius: 12px; color: white; display: flex; 
             align-items: center; justify-content: center; font-weight: 800;
         }
+        .btn-logout-direct {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--indigo-soft); color: #3730a3;
+            text-decoration: none; padding: 10px 18px; border-radius: 15px;
+            font-size: 12px; font-weight: 800; transition: 0.3s ease;
+        }
+
+        /* FORM & TABLE */
+        .form-card { background: white; padding: 30px; border-radius: 35px; margin-bottom: 30px; border: 1px solid #f0f4f8; box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); }
+        .grid-form { display: grid; grid-template-columns: 1.5fr 1fr 0.8fr; gap: 20px; align-items: end; }
+        .input-group { display: flex; flex-direction: column; gap: 10px; }
+        .input-group label { font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; }
+        .input-group input, .input-group select { padding: 14px 18px; border-radius: 18px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 13px; outline: none; font-weight: 600; }
+        .btn-simpan { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 18px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+
+        .table-container { background: white; border-radius: 35px; border: 1px solid #f0f4f8; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 22px; color: var(--text-sub); font-size: 11px; font-weight: 800; text-transform: uppercase; background: #fafbfc; border-bottom: 1px solid #f1f5f9; }
+        td { padding: 20px 22px; font-size: 14px; color: var(--text-main); border-bottom: 1px solid #f8fafc; }
+        .price-badge { background: #eff6ff; color: var(--primary); padding: 8px 15px; border-radius: 12px; font-weight: 800; }
+        .btn-edit-ui { color: var(--primary); text-decoration: none; font-weight: 800; font-size: 12px; margin-right: 15px; }
+        .btn-hapus-ui { color: var(--danger); text-decoration: none; font-weight: 800; font-size: 12px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -170,13 +154,22 @@ if(isset($_GET['hapus'])){
             </div>
             
             <div class="nav-menu">
-                <a href="dashboard.php"> Dashboard</a>
-                <a href="kelola_user.php"> Data User</a>
-                <a href="tarif_parkir.php" class="active"> Data Tarif</a>
-                <a href="area_parkir.php"> Data Area</a>
+                <a href="dashboard.php">Dashboard</a>
+                <a href="kelola_user.php">Data User</a>
+                <a href="tarif_parkir.php" class="active">Data Tarif</a>
+                <a href="area_parkir.php">Data Area</a>
             </div>
-            
-            <a href="../logout.php" style="margin-top: 25px; color: var(--text-sub); text-decoration: none; font-size: 14px; padding-left: 20px; font-weight: 600;"> Logout</a>
+
+            <div class="storage-box">
+                <p>Kapasitas Terisi</p>
+                <div class="progress-bg">
+                    <div class="progress-fill" style="width: <?= $persen ?>%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: var(--text-sub);">
+                    <span><?= $kendaraan_masuk ?> UNIT</span>
+                    <span><?= $total_kapasitas_all ?> MAX</span>
+                </div>
+            </div>
         </div>
 
         <div class="main-content">
@@ -186,14 +179,16 @@ if(isset($_GET['hapus'])){
                     <p style="color: var(--text-sub); margin: 5px 0 0 0; font-size: 14px;">Atur biaya parkir per kategori</p>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 15px; border-left: 1px solid #e2e8f0; padding-left: 20px;">
-                    <div style="text-align: right;">
+                <div class="user-nav-wrapper">
+                    <div class="profile-stack">
                         <div style="font-weight: 700; font-size: 14px; color: var(--text-main);">Administrator</div>
                         <div style="font-size: 11px; color: var(--text-sub);"><?= $_SESSION['nama'] ?? 'Admin' ?></div>
                     </div>
-                    <div class="user-avatar">
-                        <?= strtoupper(substr($_SESSION['nama'] ?? 'A', 0, 1)) ?>
-                    </div>
+                    <div class="user-avatar"><?= strtoupper(substr($_SESSION['nama'] ?? 'A', 0, 1)) ?></div>
+                    <a href="../logout.php" class="btn-logout-direct">
+                        <span>KELUAR</span>
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </a>
                 </div>
             </div>
 
@@ -209,8 +204,8 @@ if(isset($_GET['hapus'])){
                         </select>
                     </div>
                     <div class="input-group">
-                        <label>Harga Per Jam</label>
-                        <input type="number" name="harga_per_jam" placeholder="Contoh: 7000" required>
+                        <label>Harga Per Jam (Rp)</label>
+                        <input type="number" name="harga_per_jam" placeholder="7000" required>
                     </div>
                     <button type="submit" name="tambah" class="btn-simpan">Tambah Tarif</button>
                 </form>
@@ -223,30 +218,24 @@ if(isset($_GET['hapus'])){
                             <th width="80">No</th>
                             <th>Kategori Kendaraan</th>
                             <th>Tarif / Jam</th>
-                            <th style="text-align: right;">Opsi</th>
+                            <th style="text-align: right;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $query_str = "SELECT * FROM tb_tarif WHERE jenis_kendaraan != '' ORDER BY FIELD(jenis_kendaraan, 'MOTOR', 'MOBIL', 'LAINNYA') ASC";
-                        $q = mysqli_query($koneksi, $query_str);
-                        
+                        $q = mysqli_query($koneksi, "SELECT * FROM tb_tarif ORDER BY FIELD(jenis_kendaraan, 'MOTOR', 'MOBIL', 'LAINNYA') ASC");
                         $no = 1; 
                         while($data = mysqli_fetch_assoc($q)){
                         ?>
                         <tr>
                             <td style="color: var(--text-sub); font-weight: 700;">#<?= $no++ ?></td>
-                            <td style="font-weight: 700; color: var(--text-main);"><?= strtoupper($data['jenis_kendaraan']) ?></td>
-                            <td>
-                                <span class="price-badge">
-                                    <?php 
-                                        $harga_tampil = $data['tarif_per_jam'] ?? 0;
-                                        echo "Rp " . number_format($harga_tampil, 0, ',', '.');
-                                    ?>
-                                </span>
+                            <td style="font-weight: 700; color: var(--text-main);">
+                                <?= strtoupper($data['jenis_kendaraan']) ?>
                             </td>
+                            <td><span class="price-badge">Rp <?= number_format($data['tarif_per_jam'], 0, ',', '.'); ?></span></td>
                             <td style="text-align: right;">
-                                <a href="?hapus=<?= $data['id_tarif'] ?>" class="btn-hapus" onclick="return confirm('Yakin ingin menghapus tarif ini?')">Hapus</a>
+                                <a href="tarif_edit.php?id=<?= $data['id_tarif']; ?>" class="btn-edit-ui">Edit</a>
+                                <a onclick="konfirmasiHapus(<?= $data['id_tarif'] ?>)" class="btn-hapus-ui">Hapus</a>
                             </td>
                         </tr>
                         <?php } ?>
@@ -255,5 +244,34 @@ if(isset($_GET['hapus'])){
             </div>
         </div>
     </div>
+
+    <script>
+        function konfirmasiHapus(id) {
+            Swal.fire({
+                title: 'Hapus Tarif?',
+                text: "Data yang dihapus tidak bisa dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#475569',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '?hapus=' + id;
+                }
+            })
+        }
+
+        <?php if($status_msg == "sukses_tambah"): ?>
+            Swal.fire('Berhasil!', 'Tarif baru telah ditambahkan.', 'success');
+        <?php elseif($status_msg == "duplikat"): ?>
+            Swal.fire('Gagal!', 'Kategori kendaraan sudah ada!', 'error');
+        <?php elseif($status_msg == "sukses_hapus"): ?>
+            Swal.fire('Dihapus!', 'Data tarif berhasil dihapus.', 'success');
+        <?php elseif($status_msg == "gagal_hapus"): ?>
+            Swal.fire('Gagal!', 'Tarif sedang digunakan di transaksi!', 'error');
+        <?php endif; ?>
+    </script>
 </body>
 </html>

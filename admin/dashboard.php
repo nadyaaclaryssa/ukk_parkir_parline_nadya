@@ -13,7 +13,7 @@ if (isset($_GET['search'])) {
     $search = mysqli_real_escape_string($koneksi, $_GET['search']);
 }
 
-// Statistik dengan fallback value 0 agar tidak error saat data kosong
+// Statistik
 $q_pendapatan = mysqli_query($koneksi, "SELECT SUM(biaya_total) as total FROM tb_transaksi");
 $total_pendapatan = mysqli_fetch_assoc($q_pendapatan)['total'] ?? 0;
 
@@ -43,6 +43,7 @@ $sisa_slot = 1350 - $kendaraan_masuk;
             --grad-2: #b2d7f5;
             --text-main: #1e293b;
             --text-sub: #475569;
+            --indigo-soft: #e0e7ff; 
         }
 
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -62,12 +63,12 @@ $sisa_slot = 1350 - $kendaraan_masuk;
             box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.15);
         }
 
+        /* SIDEBAR */
         .sidebar {
             width: 280px; background: white;
             padding: 40px 25px; display: flex; flex-direction: column;
             border-right: 1px solid #f0f4f8;
         }
-
         .logo-section { display: flex; align-items: center; gap: 15px; padding: 0 10px; margin-bottom: 40px; }
         .logo-section img { width: 45px; height: 45px; border-radius: 12px; }
         .logo-section h2 { font-size: 20px; margin: 0; color: var(--text-main); font-weight: 800; }
@@ -82,14 +83,12 @@ $sisa_slot = 1350 - $kendaraan_masuk;
         .nav-menu a.active { background: var(--primary); color: white; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3); }
         .nav-menu a:hover:not(.active) { background: #f1f5f9; color: var(--text-main); }
 
+        /* MAIN CONTENT */
         .main-content { flex: 1; background: #fcfdfe; padding: 40px 50px; overflow-y: auto; }
 
         .header-top { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 35px;
-            padding-top: 15px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 35px; padding-top: 10px; 
         }
 
         .search-form { position: relative; width: 350px; }
@@ -101,32 +100,49 @@ $sisa_slot = 1350 - $kendaraan_masuk;
         }
         .search-input:focus { border-color: var(--primary-light); background: white; }
 
+        /* USER NAV & LOGOUT (SAMA DENGAN PETUGAS) */
+        .user-nav-wrapper { display: flex; align-items: center; gap: 15px; }
+        .profile-stack { text-align: right; border-left: 1px solid #f1f5f9; padding-left: 15px; }
+
         .user-avatar {
-            width: 40px; height: 40px; background: var(--primary); 
+            width: 42px; height: 42px; background: var(--primary); 
             border-radius: 12px; color: white; display: flex; 
             align-items: center; justify-content: center; font-weight: 800;
         }
 
-        .section-title { font-size: 14px; font-weight: 800; margin-bottom: 25px; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; }
+        .btn-logout-direct {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--indigo-soft); color: #3730a3;
+            text-decoration: none; padding: 10px 18px; border-radius: 15px;
+            font-size: 12px; font-weight: 800; transition: 0.3s ease;
+            border: 1px solid rgba(55, 48, 163, 0.1);
+        }
+
+        .btn-logout-direct:hover { background: #3730a3; color: white; }
         
+        .btn-logout-direct img { 
+            width: 18px; 
+            filter: invert(18%) sepia(48%) saturate(3651%) hue-rotate(238deg) brightness(91%) contrast(100%); 
+        }
+        .btn-logout-direct:hover img { filter: brightness(0) invert(1); }
+
+        /* TABEL & STATS */
+        .section-title { font-size: 14px; font-weight: 800; margin-bottom: 25px; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; }
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 50px; }
         .stat-card { background: white; padding: 30px; border-radius: 35px; border: 1px solid #f0f4f8; transition: 0.4s; }
-        .stat-card.primary-card { background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; box-shadow: 0 20px 30px -10px rgba(37, 99, 235, 0.2); border: none; }
+        .stat-card.primary-card { background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; border: none; }
         .stat-card h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 15px 0; opacity: 0.7; }
         .stat-card .val { font-size: 28px; font-weight: 800; }
         
         .table-card { background: white; padding: 30px; border-radius: 40px; border: 1px solid #f0f4f8; }
         table { width: 100%; border-collapse: collapse; }
-        
         th { text-align: left; padding: 15px; color: var(--text-sub); font-size: 11px; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #f8fafc; }
         td { padding: 22px 15px; font-size: 14px; color: var(--text-main); border-bottom: 1px solid #fcfdfe; }
 
         .badge { padding: 7px 14px; border-radius: 12px; font-size: 10px; font-weight: 800; }
         .badge-motor { background: #e0f2fe; color: #0369a1; }
         .badge-mobil { background: #dcfce7; color: #166534; }
-
-        .plat-code { font-family: 'Courier New', monospace; font-weight: 800; background: #f8fafc; padding: 5px 10px; border-radius: 8px; color: var(--text-main); border: 1px solid #f1f5f9; }
-        .storage-box { margin-top: auto; padding: 25px; background: #f8fafc; border-radius: 30px; }
+        .plat-code { font-family: 'Courier New', monospace; font-weight: 800; background: #f8fafc; padding: 5px 10px; border-radius: 8px; border: 1px solid #f1f5f9; }
         .btn-delete { color: #cbd5e1; text-decoration: none; font-weight: bold; font-size: 18px; transition: 0.2s; cursor: pointer; }
         .btn-delete:hover { color: #ef4444; }
     </style>
@@ -139,15 +155,12 @@ $sisa_slot = 1350 - $kendaraan_masuk;
                 <img src="../parline.png" alt="Logo">
                 <h2>Parline</h2>
             </div>
-            
             <div class="nav-menu">
                 <a href="dashboard.php" class="active"> Dashboard</a>
                 <a href="kelola_user.php"> Data User</a>
                 <a href="tarif_parkir.php"> Data Tarif</a>
                 <a href="area_parkir.php"> Data Area</a>
             </div>
-            
-            <a href="../logout.php" style="margin-top: 25px; color: var(--text-sub); text-decoration: none; font-size: 14px; padding-left: 20px; font-weight: 600;"> Logout</a>
         </div>
 
         <div class="main-content">
@@ -156,44 +169,43 @@ $sisa_slot = 1350 - $kendaraan_masuk;
                     <input type="text" name="search" class="search-input" placeholder="Cari Plat atau Petugas..." value="<?= htmlspecialchars($search) ?>">
                 </form>
 
-                <div style="display: flex; align-items: center; gap: 15px; border-left: 1px solid #e2e8f0; padding-left: 20px;">
-                    <div style="text-align: right;">
+                <div class="user-nav-wrapper">
+                    <div class="profile-stack">
                         <div style="font-weight: 700; font-size: 14px; color: var(--text-main);">Administrator</div>
                         <div style="font-size: 11px; color: var(--text-sub);"><?= $_SESSION['nama'] ?? 'Admin' ?></div>
                     </div>
                     <div class="user-avatar">
                         <?= strtoupper(substr($_SESSION['nama'] ?? 'A', 0, 1)) ?>
                     </div>
+                    
+                    <a href="../logout.php" class="btn-logout-direct">
+                        <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
+                        <span>KELUAR</span>
+                    </a>
                 </div>
             </div>
 
             <h2 class="section-title">Quick Access</h2>
-            
             <div class="stats-grid">
                 <div class="stat-card primary-card">
                     <h3>Total Pendapatan</h3>
                     <div class="val">Rp <?= number_format($total_pendapatan, 0, ',', '.'); ?></div>
-                    <p style="font-size: 11px; margin-top: 15px; opacity: 0.8;">Bulan ini: Real-time Data</p>
                 </div>
                 <div class="stat-card">
                     <h3>Kendaraan Masuk</h3>
                     <div class="val"><?= $kendaraan_masuk ?></div>
-                    <p style="font-size: 11px; margin-top: 15px; color: var(--text-sub);">Status: Aktif</p>
                 </div>
                 <div class="stat-card">
                     <h3>Sisa Slot</h3>
                     <div class="val"><?= $sisa_slot ?></div>
-                    <p style="font-size: 11px; margin-top: 15px; color: var(--text-sub);">Kapasitas: 1350</p>
                 </div>
                 <div class="stat-card">
                     <h3>Total Petugas</h3>
                     <div class="val"><?= $total_petugas ?></div>
-                    <p style="font-size: 11px; margin-top: 15px; color: var(--text-sub);">Role: Petugas</p>
                 </div>
             </div>
 
             <h2 class="section-title"><?= ($search != "") ? "Search Results for '$search'" : "Recent Activity Logs" ?></h2>
-            
             <div class="table-card">
                 <table>
                     <thead>
@@ -208,17 +220,13 @@ $sisa_slot = 1350 - $kendaraan_masuk;
                     </thead>
                     <tbody>
                         <?php
-                        // Query yang lebih stabil
                         $sql = "SELECT * FROM tb_transaksi ";
-                        if ($search != "") { 
-                            $sql .= "WHERE plat_nomor LIKE '%$search%' OR petugas LIKE '%$search%' "; 
-                        }
+                        if ($search != "") { $sql .= "WHERE plat_nomor LIKE '%$search%' OR petugas LIKE '%$search%' "; }
                         $sql .= "ORDER BY id_transaksi DESC LIMIT 10";
                         $q_log = mysqli_query($koneksi, $sql);
                         
                         if ($q_log && mysqli_num_rows($q_log) > 0) {
                             while($row = mysqli_fetch_assoc($q_log)) {
-                                // Fallback jika data null
                                 $petugas = $row['petugas'] ?? 'Sistem';
                                 $jenis = strtoupper($row['jenis_kendaraan'] ?? 'MOTOR');
                                 $plat = $row['plat_nomor'] ?? '-';
@@ -229,14 +237,14 @@ $sisa_slot = 1350 - $kendaraan_masuk;
                             <td style="font-weight: 700; color: var(--text-main);"><?= $petugas ?></td>
                             <td><span class="badge <?= ($jenis == 'MOTOR') ? 'badge-motor' : 'badge-mobil' ?>"><?= $jenis ?></span></td>
                             <td><span class="plat-code"><?= $plat ?></span></td>
-                            <td style="color: var(--text-main);"><?= $waktu ?></td>
-                            <td style="font-weight: 800; color: var(--text-main);">Rp <?= number_format($biaya, 0, ',', '.') ?></td>
+                            <td><?= $waktu ?></td>
+                            <td style="font-weight: 800;">Rp <?= number_format($biaya, 0, ',', '.') ?></td>
                             <td style="text-align: center;">
                                 <a href="javascript:void(0)" class="btn-delete" onclick="confirmDelete('<?= $row['id_transaksi'] ?>')">•••</a>
                             </td>
                         </tr>
                         <?php } } else { ?>
-                        <tr><td colspan='6' style='text-align:center; padding: 40px; color: var(--text-sub);'>Belum ada riwayat transaksi.</td></tr>
+                        <tr><td colspan='6' style='text-align:center; padding: 40px;'>Belum ada riwayat transaksi.</td></tr>
                         <?php } ?>
                     </tbody>
                 </table>

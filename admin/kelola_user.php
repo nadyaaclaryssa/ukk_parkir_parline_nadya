@@ -59,9 +59,10 @@ if(isset($_GET['hapus'])){
             --grad-1: #d4e9f7; 
             --grad-2: #b2d7f5;
             --text-main: #1e293b;
-            --text-sub: #475569; /* Disamakan dengan data area */
+            --text-sub: #475569;
             --danger: #ef4444;
             --success: #10b981;
+            --indigo-soft: #e0e7ff; /* Ditambahkan agar sama */
         }
 
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -81,6 +82,7 @@ if(isset($_GET['hapus'])){
             box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.15);
         }
 
+        /* SIDEBAR */
         .sidebar {
             width: 280px; background: white;
             padding: 40px 25px; display: flex; flex-direction: column;
@@ -100,30 +102,41 @@ if(isset($_GET['hapus'])){
         .nav-menu a.active { background: var(--primary); color: white; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3); }
         .nav-menu a:hover:not(.active) { background: #f1f5f9; color: var(--text-main); }
 
-        .storage-box { margin-top: auto; padding: 25px; background: #f8fafc; border-radius: 30px; }
-        .storage-box p { margin: 0 0 12px 0; color: var(--text-sub); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .progress-bg { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
-        .progress-fill { height: 100%; background: var(--primary); }
-
+        /* MAIN CONTENT */
         .main-content { flex: 1; background: #fcfdfe; padding: 40px 50px; overflow-y: auto; }
 
-        /* Header Top Identik dengan Area */
         .header-top { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 35px;
-            padding-top: 15px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 35px; padding-top: 15px; 
         }
-        
+
+        /* USER NAV & LOGOUT CSS (IDENTIK) */
+        .user-nav-wrapper { display: flex; align-items: center; gap: 15px; }
+        .profile-stack { text-align: right; border-left: 1px solid #f1f5f9; padding-left: 15px; }
+
         .user-avatar {
-            width: 40px; height: 40px; background: var(--primary); 
+            width: 42px; height: 42px; background: var(--primary); 
             border-radius: 12px; color: white; display: flex; 
             align-items: center; justify-content: center; font-weight: 800;
         }
+
+        .btn-logout-direct {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--indigo-soft); color: #3730a3;
+            text-decoration: none; padding: 10px 18px; border-radius: 15px;
+            font-size: 12px; font-weight: 800; transition: 0.3s ease;
+            border: 1px solid rgba(55, 48, 163, 0.1);
+        }
+
+        .btn-logout-direct:hover { background: #3730a3; color: white; }
         
-        /* Form & Table */
+        .btn-logout-direct img { 
+            width: 18px; 
+            filter: invert(18%) sepia(48%) saturate(3651%) hue-rotate(238deg) brightness(91%) contrast(100%); 
+        }
+        .btn-logout-direct:hover img { filter: brightness(0) invert(1); }
+
+        /* FORM & TABLE */
         .form-card { 
             background: white; padding: 30px; border-radius: 35px; 
             margin-bottom: 30px; border: 1px solid #f0f4f8; 
@@ -159,7 +172,6 @@ if(isset($_GET['hapus'])){
         
         .btn-hapus { color: var(--danger); text-decoration: none; font-weight: 800; font-size: 12px; padding: 8px 15px; border-radius: 10px; transition: 0.3s; }
         .btn-hapus:hover { background: #fff1f2; }
-
     </style>
 </head>
 <body>
@@ -177,8 +189,6 @@ if(isset($_GET['hapus'])){
                 <a href="tarif_parkir.php"> Data Tarif</a>
                 <a href="area_parkir.php"> Data Area</a>
             </div>
-            
-            <a href="../logout.php" style="margin-top: 25px; color: var(--text-sub); text-decoration: none; font-size: 14px; padding-left: 20px; font-weight: 600;"> Logout</a>
         </div>
 
         <div class="main-content">
@@ -188,14 +198,19 @@ if(isset($_GET['hapus'])){
                     <p style="color: var(--text-sub); margin: 5px 0 0 0; font-size: 14px;">Kelola hak akses dan data petugas</p>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 15px; border-left: 1px solid #e2e8f0; padding-left: 20px;">
-                    <div style="text-align: right;">
+                <div class="user-nav-wrapper">
+                    <div class="profile-stack">
                         <div style="font-weight: 700; font-size: 14px; color: var(--text-main);">Administrator</div>
                         <div style="font-size: 11px; color: var(--text-sub);"><?= $_SESSION['nama'] ?? 'Admin' ?></div>
                     </div>
                     <div class="user-avatar">
                         <?= strtoupper(substr($_SESSION['nama'] ?? 'A', 0, 1)) ?>
                     </div>
+                    
+                    <a href="../logout.php" class="btn-logout-direct">
+                        <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
+                        <span>KELUAR</span>
+                    </a>
                 </div>
             </div>
 
