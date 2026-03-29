@@ -175,7 +175,7 @@ while($row = mysqli_fetch_assoc($query)){
         <a href="tarif_index.php">Tarif Parkir</a>
         <a href="area_index.php">Area Parkir</a>
         <div style="margin-top: auto;">
-            <a href="../logout.php" style="color: #ffb1b1;">Logout</a>
+            <a href="../auth/logout.php" style="color: #ffb1b1;">Logout</a>
         </div>
     </div>
 

@@ -144,6 +144,8 @@ $unit_keluar = $res_unit['total'] ?? 0;
                 <a href="dashboard.php" class="active"> Dashboard</a>
                 <a href="detail_laporan.php"> Detail Laporan</a>
             </div>
+
+            <a href="../auth/logout.php" class="logout-link"> Logout</a>
         </div>
 
         <div class="main-content">

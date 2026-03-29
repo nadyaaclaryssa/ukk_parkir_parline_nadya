@@ -140,6 +140,7 @@ $query = mysqli_query($koneksi, "SELECT * FROM tb_transaksi WHERE status='keluar
                 <a href="dashboard.php"> Dashboard</a>
                 <a href="detail_laporan.php" class="active"> Detail Laporan</a>
             </div>
+            <a href="../auth/logout.php" class="logout-link"> Logout</a>
         </div>
 
         <div class="main-content">

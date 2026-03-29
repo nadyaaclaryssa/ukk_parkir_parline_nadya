@@ -134,7 +134,7 @@ for ($i = 6; $i >= 0; $i--) {
         <a href="laporan_detail.php">📄 Detail Laporan</a>
         
         <div class="sidebar-footer">
-            <a href="../../logout.php">🚪 Logout</a>
+            <a href="../../auth/logout.php">🚪 Logout</a>
         </div>
     </div>
 

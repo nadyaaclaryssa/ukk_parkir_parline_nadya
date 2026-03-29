@@ -39,7 +39,7 @@ $total = mysqli_fetch_assoc($total_duit);
         <a href="transaksi_masuk.php">🚗 Kendaraan Masuk</a>
         <a href="transaksi_keluar.php">💸 Kendaraan Keluar</a>
         <a href="laporan.php" class="active">📊 Laporan Harian</a>
-        <a href="../logout.php" style="margin-top:auto; color:#ffb1b1;">🚪 Logout</a>
+        <a href="../auth/logout.php" style="margin-top:auto; color:#ffb1b1;">🚪 Logout</a>
     </div>
 
     <div class="main-content">

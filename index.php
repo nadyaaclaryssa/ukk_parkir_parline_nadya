@@ -103,7 +103,7 @@
             <h1>Selamat Datang</h1>
             <p>Silakan login untuk mengelola Website Parline</p>
 
-            <form action="proses_login.php" method="POST">
+            <form action="auth/proses_login.php" method="POST">
                 <div class="input-group">
                     <label>Username</label>
                     <input type="text" name="username" placeholder="Masukkan username" required autocomplete="off">

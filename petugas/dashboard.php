@@ -176,7 +176,7 @@ $kendaraan_masuk = mysqli_fetch_assoc($kendaraan_masuk_query)['total'] ?? 0;
                     <div class="user-avatar">
                         <?= strtoupper(substr($_SESSION['nama'] ?? 'P', 0, 1)) ?>
                     </div>
-                    <a href="../logout.php" class="btn-logout-direct">
+                    <a href="../auth/logout.php" class="btn-logout-direct">
                         <img src="logout.png" alt="Exit">
                         <span>KELUAR</span>
                     </a>
