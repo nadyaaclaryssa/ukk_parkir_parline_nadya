@@ -114,7 +114,7 @@
                     <input type="password" name="password" placeholder="•••••" required>
                 </div>
 
-                <button type="submit" name="login" class="btn-login">Masuk ke Sistem</button>
+                <button type="submit" name="login" class="btn-login">Masuk</button>
             </form>
         </div>
     </div>
