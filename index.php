@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Parline</title>
-    <link rel="icon" href="../assets/images/parline.png">
+    <link rel="icon" href="assets/images/parline.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -94,7 +94,7 @@
 
     <div class="login-container">
         <div class="brand-side">
-             <img src="../assets/images/parline.png" alt="Logo">
+             <img src="assets/images/parline.png">
             <h2>PARLINE</h2>
             <p>Smart Parking Solution</p>
         </div>
