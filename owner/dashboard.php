@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Proteksi session agar lebih aman
 if(!isset($_SESSION['role']) || $_SESSION['role'] != "owner") { 
     header("location:../index.php"); 
     exit; 
@@ -11,20 +10,31 @@ include '../config/koneksi.php';
 $hari_ini = date('Y-m-d');
 $bulan_ini = date('Y-m');
 
-// Ambil Pendapatan Hari Ini
+// 1. Ambil Pendapatan Hari Ini
 $q_hari = mysqli_query($koneksi, "SELECT SUM(biaya_total) as total FROM tb_transaksi WHERE DATE(waktu_keluar) = '$hari_ini'");
 $res_hari = mysqli_fetch_assoc($q_hari);
 $pendapatan_hari = $res_hari['total'] ?? 0;
 
-// Ambil Pendapatan Bulan Ini
+// 2. Ambil Pendapatan Bulan Ini
 $q_bulan = mysqli_query($koneksi, "SELECT SUM(biaya_total) as total FROM tb_transaksi WHERE DATE_FORMAT(waktu_keluar, '%Y-%m') = '$bulan_ini'");
 $res_bulan = mysqli_fetch_assoc($q_bulan);
 $pendapatan_bulan = $res_bulan['total'] ?? 0;
 
-// Ambil Unit Keluar
+// 3. Ambil Unit Keluar
 $q_unit = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_transaksi WHERE DATE(waktu_keluar) = '$hari_ini'");
 $res_unit = mysqli_fetch_assoc($q_unit);
 $unit_keluar = $res_unit['total'] ?? 0;
+
+// 4. LOGIC DIAGRAM: Ambil data pendapatan 7 hari terakhir (Senin - Minggu)
+$data_chart = [];
+for ($i = 0; $i < 7; $i++) {
+    // Mengambil data berdasarkan hari dalam minggu ini (0 = Senin, 6 = Minggu)
+    $q_chart = mysqli_query($koneksi, "SELECT SUM(biaya_total) as total FROM tb_transaksi 
+                WHERE WEEKDAY(waktu_keluar) = $i 
+                AND YEARWEEK(waktu_keluar, 1) = YEARWEEK(CURDATE(), 1)");
+    $res_c = mysqli_fetch_assoc($q_chart);
+    $data_chart[] = (int)($res_c['total'] ?? 0);
+}
 ?>
 
 <!DOCTYPE html>
@@ -83,10 +93,8 @@ $unit_keluar = $res_unit['total'] ?? 0;
         .nav-menu a:hover:not(.active) { background: #f1f5f9; color: var(--text-main); }
 
         .main-content { flex: 1; background: #fcfdfe; padding: 40px 50px; overflow-y: auto; }
-
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
 
-        /* --- STYLING PROFIL & LOGOUT (PERSIS ADMIN) --- */
         .user-nav-wrapper { display: flex; align-items: center; gap: 15px; }
         .profile-stack { text-align: right; border-left: 1px solid #f1f5f9; padding-left: 15px; }
         .user-avatar {
@@ -107,7 +115,6 @@ $unit_keluar = $res_unit['total'] ?? 0;
             filter: invert(18%) sepia(48%) saturate(3651%) hue-rotate(238deg) brightness(91%) contrast(100%); 
         }
         .btn-logout-direct:hover img { filter: brightness(0) invert(1); }
-        /* ---------------------------------------------- */
 
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 35px; }
         .stat-card {
@@ -204,7 +211,8 @@ $unit_keluar = $res_unit['total'] ?? 0;
                 labels: labels,
                 datasets: [{
                     label: 'Pendapatan (Rp)',
-                    data: [1200000, 1900000, 1500000, <?= (int)$pendapatan_hari ?>, 0, 0, 0],
+                    // Mengambil data asli dari PHP yang sudah di-loop
+                    data: <?= json_encode($data_chart) ?>,
                     backgroundColor: '#2563eb',
                     borderRadius: 15,
                     barThickness: 40
@@ -212,12 +220,29 @@ $unit_keluar = $res_unit['total'] ?? 0;
             },
             options: {
                 responsive: true,
-                plugins: { legend: { display: false } },
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                },
                 scales: {
                     y: { 
                         beginAtZero: true, 
                         grid: { color: '#f1f5f9', border: { display: false } }, 
-                        ticks: { font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 }, color: '#334155' } 
+                        ticks: { 
+                            font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 }, 
+                            color: '#334155',
+                            // Format ribuan di sumbu Y
+                            callback: function(value) {
+                                if (value >= 1000) return value / 1000 + 'k';
+                                return value;
+                            }
+                        } 
                     },
                     x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 }, color: '#334155' } }
                 }

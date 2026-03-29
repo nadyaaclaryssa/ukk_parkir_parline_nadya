@@ -193,7 +193,7 @@ $kendaraan_masuk = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as
                         <?= strtoupper(substr($_SESSION['nama'] ?? 'P', 0, 1)) ?>
                     </div>
                     <a href="../auth/logout.php" class="btn-logout-direct">
-                        <img src="logout.png" alt="Exit">
+                        <img src="../assets/images/logout.png" alt="Exit">
                         <span>KELUAR</span>
                     </a>
                 </div>
