@@ -1,11 +1,13 @@
 <?php
 session_start();
 // Proteksi role petugas
-if($_SESSION['role'] != "petugas") { header("location:../index.php"); exit; }
+if(!isset($_SESSION['role']) || $_SESSION['role'] != "petugas") { 
+    header("location:../index.php"); 
+    exit; 
+}
 include '../config/koneksi.php';
 
 // Ambil data kendaraan yang statusnya masih 'masuk'
-// Menggunakan LEFT JOIN agar data tetap muncul meski id_area/id_tarif di database bernilai NULL
 $query = mysqli_query($koneksi, "SELECT tb_transaksi.*, tb_area.nama_area 
          FROM tb_transaksi 
          LEFT JOIN tb_area ON tb_transaksi.id_area = tb_area.id_area
@@ -30,6 +32,7 @@ $query = mysqli_query($koneksi, "SELECT tb_transaksi.*, tb_area.nama_area
             --text-main: #1e293b;
             --text-sub: #94a3b8;
             --bg-light: #f8fafc;
+            --indigo-soft: #e0e7ff;
         }
 
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -73,6 +76,21 @@ $query = mysqli_query($koneksi, "SELECT tb_transaksi.*, tb_area.nama_area
 
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
         
+        /* Logout Button Styling */
+        .btn-logout-direct {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--indigo-soft); color: #3730a3;
+            text-decoration: none; padding: 10px 18px; border-radius: 15px;
+            font-size: 12px; font-weight: 800; transition: 0.3s ease;
+            border: 1px solid rgba(55, 48, 163, 0.1);
+        }
+        .btn-logout-direct:hover { background: #3730a3; color: white; }
+        .btn-logout-direct img { 
+            width: 18px; 
+            filter: invert(18%) sepia(48%) saturate(3651%) hue-rotate(238deg) brightness(91%) contrast(100%); 
+        }
+        .btn-logout-direct:hover img { filter: brightness(0) invert(1); }
+
         /* Table Styling */
         .table-card {
             background: white; border-radius: 35px; border: 1px solid #f1f5f9;
@@ -82,21 +100,27 @@ $query = mysqli_query($koneksi, "SELECT tb_transaksi.*, tb_area.nama_area
 
         table { width: 100%; border-collapse: collapse; }
         th { 
-            background: var(--bg-light); padding: 22px 20px; text-align: left;
+            background: var(--bg-light); padding: 22px 25px; text-align: left;
             font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
             color: var(--text-sub); font-weight: 800;
         }
-        td { padding: 20px; border-bottom: 1px solid #f1f5f9; color: var(--text-main); font-size: 14px; font-weight: 600; }
+        td { padding: 22px 25px; border-bottom: 1px solid #f1f5f9; color: var(--text-main); font-size: 14px; font-weight: 600; }
         
+        /* Lebarkan kolom plat nomor */
+        .col-plat { min-width: 180px; }
         .badge-plat {
-            background: #1e293b; color: white; padding: 8px 14px;
-            border-radius: 10px; font-family: 'Monaco', monospace; font-size: 14px;
-            letter-spacing: 1px;
+            background: #707b8f; color: white; padding: 10px 20px;
+            border-radius: 12px; font-family: 'Monaco', monospace; font-size: 15px;
+            letter-spacing: 2px; display: inline-block;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         
+        /* Lebarkan kolom status */
+        .col-status { min-width: 150px; }
         .status-tag {
-            background: #dcfce7; color: #166534; padding: 6px 14px;
-            border-radius: 12px; font-size: 11px; font-weight: 800;
+            background: #dcfce7; color: #166534; padding: 8px 16px;
+            border-radius: 12px; font-size: 12px; font-weight: 800;
+            display: inline-block; text-align: center;
         }
 
         .user-avatar { width: 40px; height: 40px; background: var(--primary); border-radius: 12px; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; }
@@ -112,10 +136,10 @@ $query = mysqli_query($koneksi, "SELECT tb_transaksi.*, tb_area.nama_area
             </div>
             
             <div class="nav-menu">
-                <a href="dashboard.php"> Dashboard</a>
-                <a href="transaksi_masuk.php"> Transaksi Masuk</a>
-                <a href="kendaraan_aktif.php" class="active"> Kendaraan Aktif</a> 
-                <a href="transaksi_keluar.php"> Transaksi Keluar</a>
+                <a href="dashboard.php">Dashboard</a>
+                <a href="transaksi_masuk.php">Transaksi Masuk</a>
+                <a href="kendaraan_aktif.php" class="active">Kendaraan Aktif</a> 
+                <a href="transaksi_keluar.php">Transaksi Keluar</a>
             </div>
             
             <a href="../auth/logout.php" style="margin-top: 25px; color: var(--text-sub); text-decoration: none; font-size: 14px; padding-left: 20px; font-weight: 600;"> Logout</a>
@@ -128,8 +152,8 @@ $query = mysqli_query($koneksi, "SELECT tb_transaksi.*, tb_area.nama_area
                     <p style="color: var(--text-sub); margin: 5px 0 0 0; font-size: 15px;">Daftar kendaraan yang masih parkir</p>
                 </div>
 
-                <div style="display: flex; gap: 25px; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 12px; border-left: 1px solid #e2e8f0; padding-left: 20px;">
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 12px; border-right: 1px solid #e2e8f0; padding-right: 20px;">
                         <div style="text-align: right;">
                             <div style="font-weight: 700; font-size: 14px; color: var(--text-main);">Petugas</div>
                             <div style="font-size: 11px; color: var(--text-sub);"><?= $_SESSION['nama'] ?></div>
@@ -138,6 +162,11 @@ $query = mysqli_query($koneksi, "SELECT tb_transaksi.*, tb_area.nama_area
                             <?= strtoupper(substr($_SESSION['nama'] ?? 'P', 0, 1)) ?>
                         </div>
                     </div>
+
+                    <a href="../logout.php" class="btn-logout-direct">
+                        <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
+                        <span>KELUAR</span>
+                    </a>
                 </div>
             </div>
 
@@ -147,33 +176,33 @@ $query = mysqli_query($koneksi, "SELECT tb_transaksi.*, tb_area.nama_area
                 <table>
                     <thead>
                         <tr>
-                            <th>ID Transaksi</th>
-                            <th>Plat Nomor</th>
+                            <th width="120">ID Transaksi</th>
+                            <th class="col-plat">Plat Nomor</th>
                             <th>Jenis</th>
                             <th>Area Parkir</th>
                             <th>Waktu Masuk</th>
-                            <th>Status</th>
+                            <th class="col-status">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if(mysqli_num_rows($query) > 0) { 
                             while($row = mysqli_fetch_assoc($query)) { ?>
                         <tr>
-                            <td style="color: var(--primary); font-size: 13px;">#<?= $row['kode_transaksi'] ?></td>
-                            <td><span class="badge-plat"><?= $row['plat_nomor'] ?></span></td>
+                            <td style="color: var(--primary); font-size: 13px; font-weight: 800;">#<?= $row['kode_transaksi'] ?></td>
+                            <td class="col-plat"><span class="badge-plat"><?= $row['plat_nomor'] ?></span></td>
                             <td><?= $row['jenis_kendaraan'] ?? '-' ?></td>
                             <td><?= $row['nama_area'] ?? $row['area'] ?? '-' ?></td>
                             <td>
-                                <div style="font-size: 14px;"><?= date('H:i', strtotime($row['waktu_masuk'])) ?></div>
+                                <div style="font-size: 14px; color: var(--text-main);"><?= date('H:i', strtotime($row['waktu_masuk'])) ?></div>
                                 <div style="font-size: 11px; color: var(--text-sub);"><?= date('d M Y', strtotime($row['waktu_masuk'])) ?></div>
                             </td>
-                            <td><span class="status-tag">DALAM AREA</span></td>
+                            <td class="col-status"><span class="status-tag">DALAM AREA</span></td>
                         </tr>
                         <?php } } else { ?>
                         <tr>
-                            <td colspan="6" style="text-align:center; padding: 80px; color: var(--text-sub);">
-                                <div style="font-size: 40px; margin-bottom: 10px;">🍃</div>
-                                <b>Tidak ada kendaraan aktif saat ini.</b>
+                            <td colspan="6" style="text-align:center; padding: 100px; color: var(--text-sub);">
+                                <div style="font-size: 45px; margin-bottom: 15px;">🍃</div>
+                                <b style="font-size: 16px;">Tidak ada kendaraan aktif saat ini.</b>
                             </td>
                         </tr>
                         <?php } ?>
