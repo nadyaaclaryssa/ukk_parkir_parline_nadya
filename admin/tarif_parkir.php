@@ -6,12 +6,6 @@ if(!isset($_SESSION['role']) || $_SESSION['role'] != "admin") {
 }
 include '../config/koneksi.php';
 
-// Ambil data untuk Progress Bar
-$query_masuk = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_transaksi WHERE status='masuk'");
-$kendaraan_masuk = mysqli_fetch_assoc($query_masuk)['total'] ?? 0;
-$total_kapasitas_all = 1350;
-$persen = ($kendaraan_masuk / $total_kapasitas_all) * 100;
-
 // Variabel Notifikasi
 $status_msg = "";
 
@@ -52,12 +46,11 @@ if(isset($_GET['hapus'])){
     <title>Parline Admin - Data Tarif</title>
     <link rel="icon" href="../parline.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --primary: #2563eb; 
-            --primary-light: #3b82f6;
+            --primary-light: #60a5fa;
             --grad-1: #d4e9f7; 
             --grad-2: #b2d7f5;
             --text-main: #1e293b;
@@ -83,7 +76,7 @@ if(isset($_GET['hapus'])){
             box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.15);
         }
 
-        /* SIDEBAR (Tanpa Ikon) */
+        /* SIDEBAR (Bersih Tanpa Box Kapasitas) */
         .sidebar {
             width: 280px; background: white;
             padding: 40px 25px; display: flex; flex-direction: column;
@@ -103,16 +96,11 @@ if(isset($_GET['hapus'])){
         .nav-menu a.active { background: var(--primary); color: white; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3); }
         .nav-menu a:hover:not(.active) { background: #f1f5f9; color: var(--text-main); }
 
-        .storage-box { margin-top: auto; padding: 25px; background: #f8fafc; border-radius: 30px; margin-bottom: 20px; }
-        .storage-box p { margin: 0 0 12px 0; color: var(--text-sub); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .progress-bg { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--primary); transition: 0.5s; }
-
         /* MAIN CONTENT */
         .main-content { flex: 1; background: #fcfdfe; padding: 40px 50px; overflow-y: auto; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; padding-top: 15px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; padding-top: 10px; }
 
-        /* USER NAV (Hanya disini ada ikon) */
+        /* USER NAV & LOGOUT */
         .user-nav-wrapper { display: flex; align-items: center; gap: 15px; }
         .profile-stack { text-align: right; border-left: 1px solid #f1f5f9; padding-left: 15px; }
         .user-avatar {
@@ -125,7 +113,14 @@ if(isset($_GET['hapus'])){
             background: var(--indigo-soft); color: #3730a3;
             text-decoration: none; padding: 10px 18px; border-radius: 15px;
             font-size: 12px; font-weight: 800; transition: 0.3s ease;
+            border: 1px solid rgba(55, 48, 163, 0.1);
         }
+        .btn-logout-direct:hover { background: #3730a3; color: white; }
+        .btn-logout-direct img { 
+            width: 18px; 
+            filter: invert(18%) sepia(48%) saturate(3651%) hue-rotate(238deg) brightness(91%) contrast(100%); 
+        }
+        .btn-logout-direct:hover img { filter: brightness(0) invert(1); }
 
         /* FORM & TABLE */
         .form-card { background: white; padding: 30px; border-radius: 35px; margin-bottom: 30px; border: 1px solid #f0f4f8; box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); }
@@ -159,17 +154,6 @@ if(isset($_GET['hapus'])){
                 <a href="tarif_parkir.php" class="active">Data Tarif</a>
                 <a href="area_parkir.php">Data Area</a>
             </div>
-
-            <div class="storage-box">
-                <p>Kapasitas Terisi</p>
-                <div class="progress-bg">
-                    <div class="progress-fill" style="width: <?= $persen ?>%;"></div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: var(--text-sub);">
-                    <span><?= $kendaraan_masuk ?> UNIT</span>
-                    <span><?= $total_kapasitas_all ?> MAX</span>
-                </div>
-            </div>
         </div>
 
         <div class="main-content">
@@ -185,9 +169,10 @@ if(isset($_GET['hapus'])){
                         <div style="font-size: 11px; color: var(--text-sub);"><?= $_SESSION['nama'] ?? 'Admin' ?></div>
                     </div>
                     <div class="user-avatar"><?= strtoupper(substr($_SESSION['nama'] ?? 'A', 0, 1)) ?></div>
+                    
                     <a href="../logout.php" class="btn-logout-direct">
+                        <img src="logout.png" alt="Logout" onerror="this.src='https://cdn-icons-png.flaticon.com/512/182/182448.png';">
                         <span>KELUAR</span>
-                        <i class="fa-solid fa-right-from-bracket"></i>
                     </a>
                 </div>
             </div>
