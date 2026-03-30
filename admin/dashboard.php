@@ -23,7 +23,7 @@ $kendaraan_masuk = mysqli_fetch_assoc($q_masuk)['total'] ?? 0;
 $q_petugas = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_user WHERE role='petugas'");
 $total_petugas = mysqli_fetch_assoc($q_petugas)['total'] ?? 0;
 
-$sisa_slot = 1350 - $kendaraan_masuk; 
+$sisa_slot = 150 - $kendaraan_masuk; 
 ?>
 
 <!DOCTYPE html>
